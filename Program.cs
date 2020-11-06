@@ -20,7 +20,6 @@ namespace huecli
             HueBridgeDiscovery hueBridgeDiscovery = new HueBridgeDiscovery();
 
             string mainAction = argParser.GetMainAction();
-            // Console.WriteLine(mainAction);
 
             switch (mainAction)
             {
@@ -86,7 +85,7 @@ namespace huecli
                         Console.WriteLine("Invalid syntax, use huecli get-lighting hubaliashere");
                     }
                     break;
-                case "turn-on":
+                case "on":
                     if (argParser.TurnOnOffCheckEnoughArguments())
                     {
                         HueBridge hueBridge = new HueBridge(argParser.arguments[2], settings.GetIPAddress(argParser.arguments[2]), settings.GetUsername(argParser.arguments[2]));
@@ -97,7 +96,7 @@ namespace huecli
                         Console.WriteLine("Invalid syntax, use huecli turn-on hubaliashere lightidhere");
                     }
                     break;
-                case "turn-off":
+                case "off":
                     if (argParser.TurnOnOffCheckEnoughArguments())
                     {
                         HueBridge hueBridge = new HueBridge(argParser.arguments[2], settings.GetIPAddress(argParser.arguments[2]), settings.GetUsername(argParser.arguments[2]));
@@ -128,6 +127,28 @@ namespace huecli
                     else
                     {
                         Console.WriteLine("Invalid syntax, use huecli set-temperature hubalias lightid 154-500");
+                    }
+                    break;
+                case "set-color":
+                    if (argParser.SetColorCheckEnoughArguments())
+                    {
+                        HueBridge hueBridge = new HueBridge(argParser.arguments[2], settings.GetIPAddress(argParser.arguments[2]), settings.GetUsername(argParser.arguments[2]));
+                        hueBridge.SetLightingColor(argParser.arguments[3], argParser.arguments[4]);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid Syntax, use huecli set-color hubalias lightid hue");
+                    }
+                    break;
+                case "set-effect":
+                    if (argParser.SetEffectcheckEnoughArguments())
+                    {
+                        HueBridge hueBridge = new HueBridge(argParser.arguments[2], settings.GetIPAddress(argParser.arguments[2]), settings.GetUsername(argParser.arguments[2]));
+                        hueBridge.SetLightingEffect(argParser.arguments[3], argParser.arguments[4]);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid Syntax, use huecli set-effect hubalias lightid bool");
                     }
                     break;
                 default:

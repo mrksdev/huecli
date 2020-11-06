@@ -20,22 +20,17 @@ namespace huecli
             Console.WriteLine("Get available hubs:             huecli get-hubs");
             Console.WriteLine("Get avail. lighting for hub:    huecli get-lighting hubalias");
             Console.WriteLine("");
-            Console.WriteLine("Turn light on:                  huecli turn-on hubalias lightid");
-            Console.WriteLine("Turn light off:                 huecli turn-off hubalias lightid");
+            Console.WriteLine("Turn light on:                  huecli on hubalias lightid");
+            Console.WriteLine("Turn light off:                 huecli off hubalias lightid");
             Console.WriteLine("Set light brightness:           huecli set-brightness hubalias lightid 1-254");
             Console.WriteLine("Set light temperature:          huecli set-temperature hubalias lightid 154-500");
+            Console.WriteLine("Set light color:                huecli set-color hubalias lightid 0-65535");
+            Console.WriteLine("Set light effect:               huecli set-effect hubalias lightid <colorloop>|<none>");
         }
 
         public bool ShouldShowHelp()
         {
-            if (this.arguments.Length > 1)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
+            return this.arguments.Length <= 1;
         }
 
         public string GetMainAction()
@@ -52,74 +47,42 @@ namespace huecli
 
         public bool RemoveHubCheckEnoughArguments()
         {
-            if (this.arguments.Length == 3)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return this.arguments.Length == 3;
         }
 
         public bool AddHubCheckEnoughArguments()
         {
-            if (this.arguments.Length == 4)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return this.arguments.Length == 4;
         }
 
         public bool GetLightingCheckEnoughArguments()
         {
-            if (this.arguments.Length == 3)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return this.arguments.Length == 3;
         }
 
         public bool TurnOnOffCheckEnoughArguments()
         {
-            if (this.arguments.Length == 4)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return this.arguments.Length == 4;
         }
 
         public bool SetBrightnessCheckEnoughArguments()
         {
-            if (this.arguments.Length == 5)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return this.arguments.Length == 5;
         }
 
         public bool SetTemperatureCheckEnoughArguments()
         {
-            if (this.arguments.Length == 5)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return this.arguments.Length == 5;
+        }
+
+        public bool SetColorCheckEnoughArguments()
+        {
+            return this.arguments.Length == 5;
+        }
+
+        public bool SetEffectcheckEnoughArguments()
+        {
+            return this.arguments.Length == 5 || this.arguments.Length == 4;
         }
 
         public ArgumentParser()

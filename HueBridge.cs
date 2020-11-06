@@ -48,14 +48,14 @@ namespace huecli
             return hueBridges;
         }
 
-        public string CreateBridgeLink(String alias, String localipaddress)
+        public string CreateBridgeLink(string alias, string localipaddress)
         {
             HttpClient apiClient = new HttpClient();
             StringContent content = new StringContent("{\"devicetype\": \"huecli#"+alias+"\"}", Encoding.UTF8, "application/json");
             while (true)
             {
                 HttpResponseMessage responseMessage = apiClient.PostAsync("http://"+localipaddress+"/api", content).Result;
-                String returnedMessage = responseMessage.Content.ReadAsStringAsync().Result;
+                string returnedMessage = responseMessage.Content.ReadAsStringAsync().Result;
                 if (!returnedMessage.Contains("\"description\":\"link button not pressed\"}}]"))
                 {
                     // Console.WriteLine(returnedMessage);
@@ -69,7 +69,7 @@ namespace huecli
             }
         }
 
-        public bool RemoveBridgeLink(String localipaddress, String username)
+        public bool RemoveBridgeLink(string localipaddress, string username)
         {
             HttpClient apiClient = new HttpClient();
             HttpResponseMessage responseMessage = apiClient.DeleteAsync("http://"+localipaddress+"/api/"+username+"/config/whitelist/"+username).Result;
@@ -90,7 +90,7 @@ namespace huecli
         public string HueBridgeAlias    { get; set; }
         public string HueBridgeUsername { get; set; }
 
-        // public HueBridge(String hueBridgeAlias, String hueBridgeAddress = null)
+        // public HueBridge(string hueBridgeAlias, string hueBridgeAddress = null)
         // {
         //     HueBridgeAlias = hueBridgeAlias;
 
@@ -108,7 +108,7 @@ namespace huecli
         //     }
         // }
 
-        public HueBridge(String hueBridgeAlias, String hueBridgeAddress, String hueBridgeUsername)
+        public HueBridge(string hueBridgeAlias, string hueBridgeAddress, string hueBridgeUsername)
         {
             this.HueBridgeAddress  = hueBridgeAddress;
             this.HueBridgeAlias    = hueBridgeAlias;
@@ -118,41 +118,60 @@ namespace huecli
         public void GetBridgeLighting()
         {
             HttpClient apiClient = new HttpClient();
-            HttpResponseMessage responseMessage = apiClient.GetAsync("http://"+this.HueBridgeAddress+"/api/"+this.HueBridgeUsername).Result;
-            String returnedMessage = responseMessage.Content.ReadAsStringAsync().Result;
+            HttpResponseMessage responseMessage = apiClient.GetAsync($"http://{this.HueBridgeAddress}/api/{this.HueBridgeUsername}").Result;
+            string returnedMessage = responseMessage.Content.ReadAsStringAsync().Result;
             var jsonObject = JObject.Parse(returnedMessage);
             foreach (JProperty lightObject in jsonObject["lights"])
             {
-                Console.WriteLine("Light ID "+lightObject.Name+" with name "+lightObject.First["name"]+" found.");
+                Console.WriteLine($"Light ID {lightObject.Name} with name {lightObject.First["name"]} found.");
             }
         }
 
-        public void TurnOnLighting(String lightID)
+        public void TurnOnLighting(string lightID)
         {
             HttpClient apiClient = new HttpClient();
             StringContent content = new StringContent("{\"on\": true}", Encoding.UTF8, "application/json");
-            HttpResponseMessage responseMessage = apiClient.PutAsync("http://"+this.HueBridgeAddress+"/api/"+this.HueBridgeUsername+"/lights/"+lightID+"/state", content).Result;
+            HttpResponseMessage responseMessage = apiClient.PutAsync(this.GetBaseUrl(lightID), content).Result;
         }
 
-        public void TurnOffLighting(String lightID)
+        public void TurnOffLighting(string lightID)
         {
             HttpClient apiClient = new HttpClient();
             StringContent content = new StringContent("{\"on\": false}", Encoding.UTF8, "application/json");
-            HttpResponseMessage responseMessage = apiClient.PutAsync("http://"+this.HueBridgeAddress+"/api/"+this.HueBridgeUsername+"/lights/"+lightID+"/state", content).Result;
+            HttpResponseMessage responseMessage = apiClient.PutAsync(this.GetBaseUrl(lightID), content).Result;
         }
 
-        public void SetLightingBrightness(String lightID, String brightness)
+        public void SetLightingBrightness(string lightID, string brightness)
         {
             HttpClient apiClient = new HttpClient();
             StringContent content = new StringContent("{\"bri\": "+brightness+"}", Encoding.UTF8, "application/json");
-            HttpResponseMessage responseMessage = apiClient.PutAsync("http://"+this.HueBridgeAddress+"/api/"+this.HueBridgeUsername+"/lights/"+lightID+"/state", content).Result;
+            HttpResponseMessage responseMessage = apiClient.PutAsync(this.GetBaseUrl(lightID), content).Result;
         }
 
-        public void SetLightingTemperature(String lightID, String temperature)
+        public void SetLightingTemperature(string lightID, string temperature)
         {
             HttpClient apiClient = new HttpClient();
             StringContent content = new StringContent("{\"ct\": "+temperature+"}", Encoding.UTF8, "application/json");
-            HttpResponseMessage responseMessage = apiClient.PutAsync("http://"+this.HueBridgeAddress+"/api/"+this.HueBridgeUsername+"/lights/"+lightID+"/state", content).Result;
+            HttpResponseMessage responseMessage = apiClient.PutAsync(this.GetBaseUrl(lightID), content).Result;
+        }
+
+        public void SetLightingColor(string lightID, string hue)
+        {
+            HttpClient apiClient = new HttpClient();
+            StringContent content = new StringContent("{\"hue\": "+hue+"}", Encoding.UTF8, "application/json");
+            HttpResponseMessage responseMessage = apiClient.PutAsync(this.GetBaseUrl(lightID), content).Result;
+        }
+
+        public void SetLightingEffect(string lightID, string effect = "none")
+        {
+            HttpClient apiClient = new HttpClient();
+            StringContent content = new StringContent("{\"effect\": \""+effect+"\"}", Encoding.UTF8, "application/json");
+            HttpResponseMessage responseMessage = apiClient.PutAsync(this.GetBaseUrl(lightID), content).Result;
+        }
+
+        private string GetBaseUrl(string lightId)
+        {
+            return $"http://{this.HueBridgeAddress}/api/{this.HueBridgeUsername}/lights/{lightId}/state";
         }
     }
 }
